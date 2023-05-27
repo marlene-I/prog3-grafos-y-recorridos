@@ -1,1 +1,6 @@
-Test*
+**Test*
+**bin/*
+Vertice.java
+.metadata
+.vscode
+README.md
