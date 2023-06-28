@@ -35,7 +35,9 @@ public class ServicioCaminos {
 	}
 	
 	private void subCamino(Integer origenActual, Integer destino, List<Integer> caminoParcial /* the subpath?*/){
-		if(caminoParcial.size() <= this.lim + 1){
+		// como el numero de arcos siempre excedera por uno a la cantidad de vertices
+		// comparo por el numero de vertices en el camino +1 
+		if(caminoParcial.size() + 1 <= this.lim){
 			if(origenActual == destino){ //deberia preguntar por size < this.lim
 				this.caminos.add(new ArrayList<Integer>(caminoParcial));
 			} else {

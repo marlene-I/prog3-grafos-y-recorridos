@@ -40,29 +40,29 @@ public class ServicioDFS {
 
 	private List<Integer> dfsVisit(Integer verticeActual){
 		List<Integer> verticesVisitados = new ArrayList<Integer>();
-		// pintar el vertice de color amarelo 
+		// pintar el vertice de color amarillo 
 		this.visitados.put(verticeActual, Estado.AMARILLO.toString());
+		// construyo los visitados antes de la recursión, esto me permite 
+		// mantener el orden de visita en el arreglo
+		verticesVisitados.add(verticeActual);
 		
 		// obtener los adyacentes del verticeActual
 		Iterator<Integer> adyacentesActuales = this.grafo.obtenerAdyacentes(verticeActual);
 
-		// recorrer los adyacentes del verticeActual que sean de color blanco!! 
+		// recorrer los adyacentes del verticeActual que sean de color blanco
 		while(adyacentesActuales.hasNext()){
 			Integer idVerticeAdyacente = adyacentesActuales.next();
 			if(this.visitados.get(idVerticeAdyacente) == Estado.BLANCO.toString()){
 				// como respuesta quiero obtener los vertices visitados a partir
-				// del adyacente dado (append)
-				// (recursividad entered the chat)
+				// del adyacente dado
 				verticesVisitados.addAll(dfsVisit(idVerticeAdyacente));
 			}
 		}
 		// luego de recorrer todos los vertices adyacentes este vertice esta "agotado" 
-		// ==>> Lo pintamo negro
 		this.visitados.put(verticeActual, Estado.NEGRO.toString());
 		// (y lo agregamos al arrego de vertices visitados que va a tener los visitados
 		// al visitar los adyacentes )
 
-		verticesVisitados.add(verticeActual);
 		
 		return verticesVisitados;
 	}

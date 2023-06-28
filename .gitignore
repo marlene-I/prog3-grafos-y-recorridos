@@ -1,6 +1,10 @@
+bin
 **Test*
 **bin/*
 Vertice.java
 .metadata
 .vscode
 README.md
+*class
+Consultas.md
+Correciones.md

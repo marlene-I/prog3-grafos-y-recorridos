@@ -2,14 +2,17 @@
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GrafoDirigido<T> implements Grafo<T> {
 
 	private HashMap<Integer, LinkedList<Arco<T>>> grafo; 
+	private Integer numeroArcos;
 
 	public GrafoDirigido() {
 		this.grafo = new HashMap<>();
+		this.numeroArcos = 0;
 	}
 
 	
@@ -31,35 +34,60 @@ public class GrafoDirigido<T> implements Grafo<T> {
 		}	
 	}
 
-	/**
-	* Complejidad: O(1).
+	/*
+	* Complejidad: O(a^2). Donde a son los arcos del grafo.
 	* Chequeo de que la clave exista en el HashMap: O(1).
+	* Iterar sobre los arcos del grafo: O(a).
+	* Iterar sobre un arreglo de arcos a borrar: O(a).
 	* Remover un elemento del HashMap : O(1).
 	*/
 	@Override
 	public void borrarVertice(int verticeId) {
+		
 		if(this.grafo.containsKey(verticeId)){
+			// borrar arco que tengan como destino el verticeId a borrar
+			ArrayList<Arco<T>> arcosABorrar = new ArrayList<Arco<T>>();
+			Iterator<Arco<T>> arcosDelGrafo = this.obtenerArcos(); 
+
+			while (arcosDelGrafo.hasNext()){
+				Arco<T> arco = arcosDelGrafo.next();
+				if(arco.getVerticeDestino() == verticeId){
+					arcosABorrar.add(arco);
+				}
+			}
+
+			for(Arco<T> arco : arcosABorrar){
+				this.borrarArco(arco.getVerticeOrigen(), verticeId);
+			}
+
 			this.grafo.remove(verticeId);
 		}	
 	}
 
 	/**
-	* Complejidad: O(1).
-	* Chequeo de que la clave exista en el HashMap: O(1).
-	* Obtener un elemento del HashMap: O(1).
+	* Complejidad: O(n). Donde n es la cantidad de arcos que tiene el vertice 1.
+	* Obtener el iterator de Arcos: O(1).
+	* Iterar sobre los arcos del vertice: O(n).
 	* Método add de LinkedList tiene complejidad O(1).
 	*/
 	@Override
 	public void agregarArco(int verticeId1, int verticeId2, T etiqueta) {
-		if(!this.grafo.containsKey(verticeId1)){
-			this.agregarVertice(verticeId1);
+		Iterator<Arco<T>> arcos = this.obtenerArcos(verticeId1);
+
+		Boolean existeArco = false;
+		while(arcos.hasNext() && !existeArco){
+			Arco<T> arco = arcos.next();
+			if(arco.getVerticeDestino() == verticeId2){
+				existeArco = true;
+			}
 		}
 		
-		if(!this.grafo.containsKey(verticeId2)){
-			this.agregarVertice(verticeId2);
+		if(!existeArco){
+			// Asumo que vertice1 es el origen y vertice 2 es el destino
+			this.grafo.get(verticeId1).add(new Arco<T>(verticeId1, verticeId2, etiqueta));
+			this.numeroArcos++;
 		}
-		// Asumo que vertice1 es el origen y vertice 2 es el destino
-		this.grafo.get(verticeId1).add(new Arco<T>(verticeId1, verticeId2, null));
+
 	}
 
 	
@@ -71,6 +99,7 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	 */
 	@Override
 	public void borrarArco(int verticeId1, int verticeId2) {
+		// NO MODIFIQUE ESTE METODO PORQUE LO CONSULTE EN CLASE
 		Arco<T> arcoABorrar = new Arco<T>(verticeId1, verticeId2, null);
         // la linked list va a buscar entre sus elementos un arco que cumpla:
 		//  arcoABorrar.equals(arco) y lo eliminará.
@@ -90,39 +119,38 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	/**
 	 * Complejidad: O(n) donde n es la cantidad de Arcos del Vértice.
 	 *	Obtener un elemento del HashMap: O(1).
-	 *	El método contains de la LinkedList debe iterar hasta encontrar el
-	 * 	arco buscado: O(n). 
+	 *	Iterar sobre todos los arcos del vertice1: O(n).
 	 */
 	@Override
 	public boolean existeArco(int verticeId1, int verticeId2) {
-		Arco<T> arcoABuscar = new Arco<T>(verticeId1, verticeId2, null);
-        // retornará true si entre sus elementos encuentra un arco tal que: 
-        // arco.equals(arcoABuscar) == true
-		return this.grafo.get(verticeId1).contains(arcoABuscar);
+		LinkedList<Arco<T>> arcosDelVertice = this.grafo.get(verticeId1);
+
+		for(Arco<T> arco : arcosDelVertice){
+			if(arco.getVerticeDestino() == verticeId2){
+				return true;
+			}
+		}
+
+		 return false;
 	}
 
 	
 	/**
-	 * Complejidad: O(n*n) donde n es la cantidad de Arcos del Vértice.
+	 * Complejidad: O(n) donde n es la cantidad de Arcos del Vértice.
 	 *	Obtener un elemento del HashMap: O(1).
-	 *	El método indexOf de la LinkedList debe iterar hasta encontrar el
-	 * 	arco a obtener: O(n). 
-	 * 	Con el indice del elemento encontado, el método get de la LinkedList
-	 * 	iterará entre sus elementos hasta dicho índice, entonces para el peor
-	 * 	caso: O(n).
-	 * 	Complejidad total: O(n*n).
+	 *	Iterar sobre los arcos del vertice: O(n).
 	 */
 	@Override
 	public Arco<T> obtenerArco(int verticeId1, int verticeId2) {
-
-		Arco<T> arcoAObtener = new Arco<T>(verticeId1, verticeId2, null);
 		LinkedList<Arco<T>> arcosDelVertice = this.grafo.get(verticeId1);
-        int index = arcosDelVertice.indexOf(arcoAObtener);
+		
+		for(Arco<T> arco : arcosDelVertice){
+			if(arco.getVerticeDestino() == verticeId2){
+				return arco;
+			}
+		}
 
-        if(index != -1){
-            return arcosDelVertice.get(index);
-        }
-        return null;
+		return null;
 	}
 
 	/**
@@ -135,17 +163,12 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	}
 
 	/**
-	 * Complejidad O(n) donde n es la cantidad de vértices del 
-	 * grafo dado que se debe preguntar a cada vértice la cantidad
-	 * de arcos que almacena.
+	 * Complejidad O(1). Dado que el numero de arcos se lleva
+	 * en un atributo de clase.
 	 */
 	@Override
 	public int cantidadArcos() {
-		int total = 0;
-		for(LinkedList<Arco<T>> arcos : this.grafo.values()){
-			total += arcos.size();
-		}
-		return total;
+		return this.numeroArcos;
 	}
 
 	/**
@@ -181,6 +204,7 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	@Override
 	public Iterator<Arco<T>> obtenerArcos() {
 		LinkedList<Arco<T>> arcos = new LinkedList<Arco<T>>();
+
 		for (LinkedList<Arco<T>> arcosDelVertice : this.grafo.values()){
 			arcos.addAll(arcosDelVertice);
 		}
