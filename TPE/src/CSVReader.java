@@ -14,13 +14,16 @@ public class CSVReader {
 		this.path = path;
 	}
 	
-	public void read() {
+	public GrafoDirigido<Integer> read() {
 		
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
 		// lines.get(1) tiene la segunda linea del archivo... y así
 		ArrayList<String[]> lines = this.readContent();
 		
+		// instancio el grafo
+		GrafoDirigido<Integer> grafo = new GrafoDirigido<>();
+
 		for (String[] line: lines) {
 			// Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
 			Integer origen = Integer.parseInt(line[0].trim().substring(1));
@@ -28,9 +31,13 @@ public class CSVReader {
 			Integer etiqueta = Integer.parseInt(line[2].trim());
 			
 			// Aca instanciar lo que necesiten en base a los datos leidos
+			grafo.agregarVertice(origen);
+			grafo.agregarVertice(destino);
+			grafo.agregarArco(origen, destino, etiqueta);
+
 		}
 		
-		
+		return grafo;
 	}
 
 	private ArrayList<String[]> readContent() {

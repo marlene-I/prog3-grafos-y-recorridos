@@ -2,7 +2,9 @@
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class GrafoDirigido<T> implements Grafo<T> {
@@ -197,9 +199,11 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	}
 
 	/**
-	 * Complejidad O(n) donde n es el número de Vértices en el Grafo
-	 * dado que para obtener todos los Arcos del Grafo se debe iterar 
-	 * por todos los vértices pidiendo los arcos asociados.
+	 * Complejidad O(n * a) donde n es el número de Vértices en el Grafo
+	 * y a son los arcos adyacentes al vértice, dado que para obtener todos los 
+	 * Arcos del Grafo se debe iterar por todos los vértices pidiendo los 
+	 * arcos adyacentes e iterar sobre ellos para agregarlos a la lista de
+	 * todos los arcos
 	 */
 	@Override
 	public Iterator<Arco<T>> obtenerArcos() {
@@ -219,4 +223,23 @@ public class GrafoDirigido<T> implements Grafo<T> {
 	public Iterator<Arco<T>> obtenerArcos(int verticeId) {
 		return this.grafo.get(verticeId).iterator();
 	}
+
+
+	/***
+	 * METODOS AGREGADOS PARA LA SEGUNDA PARTE DEL TPE
+	 * 
+	 */
+	public List<Arco<T>> obtenerListArcos() {
+		LinkedList<Arco<T>> arcos = new LinkedList<Arco<T>>();
+
+		for (LinkedList<Arco<T>> arcosDelVertice : this.grafo.values()){
+			arcos.addAll(arcosDelVertice);
+		}
+		return arcos;
+	}
+
+	public List<Integer> obtenerListVertices() {
+		return new ArrayList<>(this.grafo.keySet());
+	}
+
 }
