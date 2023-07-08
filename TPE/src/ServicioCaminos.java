@@ -12,7 +12,6 @@ public class ServicioCaminos {
 	private int lim;
 	private List<Integer> visitados;
 	private List<List<Integer>> caminos;
-	// store caminos ??? 
 	
 	// Servicio caminos
 	public ServicioCaminos(Grafo<?> grafo, int origen, int destino, int lim) {
@@ -27,19 +26,19 @@ public class ServicioCaminos {
 		this.visitados = new ArrayList<>();
 		List<Integer> subCamino = new ArrayList<Integer>();
 		subCamino.add(origen);
-		this.visitados.add(origen);
 
 		this.subCamino(this.origen, this.destino, subCamino);
 
 		return this.caminos;
 	}
 	
-	private void subCamino(Integer origenActual, Integer destino, List<Integer> caminoParcial /* the subpath?*/){
+	private void subCamino(Integer origenActual, Integer destino, List<Integer> caminoParcial){
 		// como el numero de arcos siempre excedera por uno a la cantidad de vertices
 		// comparo por el numero de vertices en el camino +1 
-		if(caminoParcial.size() + 1 <= this.lim){
-			if(origenActual == destino){ //deberia preguntar por size < this.lim
-				this.caminos.add(new ArrayList<Integer>(caminoParcial));
+		if(caminoParcial.size() <= this.lim + 1 ){
+			if(origenActual == destino){ 
+				List<Integer> copyCamino = new ArrayList<>(caminoParcial);
+				this.caminos.add(copyCamino);
 			} else {
 				Iterator<Integer> adyacentesAlOrigenIter = this.grafo.obtenerAdyacentes(origenActual);
 				while(adyacentesAlOrigenIter.hasNext()){
